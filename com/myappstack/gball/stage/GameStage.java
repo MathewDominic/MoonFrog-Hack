@@ -171,6 +171,7 @@ public class GameStage extends Stage {
 				gun1.setSize(124, 118);
 				gun1.setPosition(676, 362);
 				addActor(gun1);
+				activeGun=false;
 			}
 		}
 		if(TimeUtils.timeSinceMillis(spike_active_time) < 2000) {
@@ -191,6 +192,7 @@ public class GameStage extends Stage {
 				spike1.setSize(112, 130);
 				spike1.setPosition(688, 0);
 				addActor(spike1);
+				activeSpike=false;
 			}
 		}
 		if(TimeUtils.timeSinceMillis(electric_active_time) < 2000) {
@@ -211,6 +213,7 @@ public class GameStage extends Stage {
 				electric1.setSize(132, 113);
 				electric1.setPosition(0, 380);
 				addActor(electric1);
+				activeElectric = false;
 			}
 		}
 		if(TimeUtils.timeSinceMillis(fire_active_time) < 2000) {
@@ -231,6 +234,7 @@ public class GameStage extends Stage {
 				flamethrower1.setSize(132, 113);
 				flamethrower1.setPosition(0, 0);
 				addActor(flamethrower1);
+				activeFire = false;
 			}
 		}
 		

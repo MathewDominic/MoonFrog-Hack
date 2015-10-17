@@ -59,7 +59,7 @@ public class Food extends Actor{
 		{
 			t = new Texture(Gdx.files.internal("spike.png"));
 		}
-		else {
+		else if (this.type == FoodType.BLUE){
 			t = new Texture(Gdx.files.internal("gun.png"));
 		}
 		
@@ -85,11 +85,11 @@ public class Food extends Actor{
 		{
 			t = new Texture(Gdx.files.internal("fire.png"));
 		}
-		if(this.type == FoodType.ELECTRIC)
+		else if(this.type == FoodType.ELECTRIC)
 		{
 			t = new Texture(Gdx.files.internal("electric.png"));
 		}
-		if(this.type == FoodType.SPIKE)
+		else if(this.type == FoodType.SPIKE)
 		{
 			t = new Texture(Gdx.files.internal("spike.png"));
 		}
