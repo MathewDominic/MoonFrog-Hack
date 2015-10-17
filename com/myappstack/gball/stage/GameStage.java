@@ -219,15 +219,21 @@ public class GameStage extends Stage {
 		if(TimeUtils.timeSinceMillis(fire_active_time) < 2000) {
 			activeFire = true;
 			flamethrower1.remove();
+			//flamethrower2.remove();
 			System.out.println("Fire Active");
 			flamethrower1t = new Texture(Gdx.files.internal("flamethrowe2.png"));
+			flamethrower2t = new Texture(Gdx.files.internal("firegif.gif"));
 			flamethrower1 = new Image(flamethrower1t);
+			flamethrower2 = new Image(flamethrower2t);
 			flamethrower1.setSize(132, 113);
 			flamethrower1.setPosition(0, 0);
 			addActor(flamethrower1);
+			addActor(flamethrower2);
 		}
 		else
 		{
+			if(flamethrower2 != null)
+				flamethrower2.remove();
 			if(flamethrower1 == null || activeFire) {
 				flamethrower1t = new Texture(Gdx.files.internal("flamethrower1.png"));
 				flamethrower1 = new Image(flamethrower1t);

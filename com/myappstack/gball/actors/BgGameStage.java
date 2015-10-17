@@ -23,7 +23,7 @@ public class BgGameStage extends Actor{
 		Pixmap pixmap = new Pixmap( 64, 64, Format.RGBA8888 );
 		pixmap.setColor( 1, 1, 0, 0f );
 		//bg= new Texture( pixmap );
-		bg = new Texture(Gdx.files.internal("background.jpg"));
+		bg = new Texture(Gdx.files.internal("planb.jpg"));
 		bg.setWrap(TextureWrap.Repeat, TextureWrap.Repeat); 
 	}
 
