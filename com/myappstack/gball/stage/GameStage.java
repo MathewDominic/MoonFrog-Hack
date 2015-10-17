@@ -65,7 +65,7 @@ public class GameStage extends Stage {
 	//private Ball redBall;
 	private BgGameStage bgWood;
 	private Texture gun1t, gun2t, electric1t, electric2t, spike1t, spike2t, flamethrower1t, flamethrower2t;
-	private Vector2 margins,screenDims;
+	private Vector2 margins,screenDims, wepDims;
 	
 	private Integer score;
 	private Table table;
@@ -157,8 +157,8 @@ public class GameStage extends Stage {
 			System.out.println("Gun Active");
 			gun1t = new Texture(Gdx.files.internal("gun2.png"));
 			gun1 = new Image(gun1t);
-			gun1.setSize(124, 118);
-			gun1.setPosition(676, 362);
+			gun1.setSize(wepDims.x, wepDims.y);
+			gun1.setPosition(screenDims.x-wepDims.x, screenDims.y-wepDims.y);
 			addActor(gun1);
 
 		}
@@ -168,8 +168,8 @@ public class GameStage extends Stage {
 			{
 				gun1t = new Texture(Gdx.files.internal("gun1.png"));
 				gun1 = new Image(gun1t);
-				gun1.setSize(124, 118);
-				gun1.setPosition(676, 362);
+				gun1.setSize(wepDims.x, wepDims.y);
+				gun1.setPosition(screenDims.x-wepDims.x, screenDims.y-wepDims.y);
 				addActor(gun1);
 				activeGun=false;
 			}
@@ -180,8 +180,8 @@ public class GameStage extends Stage {
 			System.out.println("Spike Active");
 			spike1t = new Texture(Gdx.files.internal("spike2.png"));
 			spike1 = new Image(spike1t);
-			spike1.setSize(112, 130);
-			spike1.setPosition(688, 0);
+			spike1.setSize(wepDims.x, wepDims.y);
+			spike1.setPosition(screenDims.x - wepDims.x, 0);
 			addActor(spike1);
 		}
 		else
@@ -189,8 +189,8 @@ public class GameStage extends Stage {
 			if(spike1 == null || activeSpike) {
 				spike1t = new Texture(Gdx.files.internal("spike1.png"));
 				spike1 = new Image(spike1t);
-				spike1.setSize(112, 130);
-				spike1.setPosition(688, 0);
+				spike1.setSize(wepDims.x, wepDims.y);
+				spike1.setPosition(screenDims.x-wepDims.x, 0);
 				addActor(spike1);
 				activeSpike=false;
 			}
@@ -201,8 +201,8 @@ public class GameStage extends Stage {
 			System.out.println("Electric Active");
 			electric1t = new Texture(Gdx.files.internal("electric2.png"));
 			electric1 = new Image(electric1t);
-			electric1.setSize(132, 113);
-			electric1.setPosition(0, 380);
+			electric1.setSize(wepDims.x, wepDims.y);
+			electric1.setPosition(0, screenDims.y-wepDims.y);
 			addActor(electric1);
 		}
 		else
@@ -210,8 +210,8 @@ public class GameStage extends Stage {
 			if(electric1 == null || activeElectric) {
 				electric1t = new Texture(Gdx.files.internal("electric1.png"));
 				electric1 = new Image(electric1t);
-				electric1.setSize(132, 113);
-				electric1.setPosition(0, 380);
+				electric1.setSize(wepDims.x, wepDims.y);
+				electric1.setPosition(0, screenDims.y-wepDims.y);
 				addActor(electric1);
 				activeElectric = false;
 			}
@@ -222,7 +222,7 @@ public class GameStage extends Stage {
 			System.out.println("Fire Active");
 			flamethrower1t = new Texture(Gdx.files.internal("flamethrowe2.png"));
 			flamethrower1 = new Image(flamethrower1t);
-			flamethrower1.setSize(132, 113);
+			flamethrower1.setSize(wepDims.x, wepDims.y);
 			flamethrower1.setPosition(0, 0);
 			addActor(flamethrower1);
 		}
@@ -231,7 +231,7 @@ public class GameStage extends Stage {
 			if(flamethrower1 == null || activeFire) {
 				flamethrower1t = new Texture(Gdx.files.internal("flamethrower1.png"));
 				flamethrower1 = new Image(flamethrower1t);
-				flamethrower1.setSize(132, 113);
+				flamethrower1.setSize(wepDims.x, wepDims.y);
 				flamethrower1.setPosition(0, 0);
 				addActor(flamethrower1);
 				activeFire = false;
@@ -284,7 +284,7 @@ public class GameStage extends Stage {
 				gun_active_time=TimeUtils.millis();
 				//addActor(weapon);
 			}
-			if(food.getType() == FoodType.RED)
+			else if(food.getType() == FoodType.RED)
 			{
 				//t = new Texture(Gdx.files.internal("flamethrower-picked.png"));
 				//Image weapon = new Image(t);
@@ -294,7 +294,7 @@ public class GameStage extends Stage {
 				fire_active_time=TimeUtils.millis();
 				//addActor(weapon);
 			}
-			if(food.getType() == FoodType.SPIKE)
+			else if(food.getType() == FoodType.SPIKE)
 			{
 				//t = new Texture(Gdx.files.internal("spike-weapon-picked.png"));
 				//Image weapon = new Image(t);
@@ -304,7 +304,7 @@ public class GameStage extends Stage {
 				spike_active_time=TimeUtils.millis();
 				//addActor(weapon);
 			}
-			if(food.getType() == FoodType.ELECTRIC)
+			else if(food.getType() == FoodType.ELECTRIC)
 			{
 				//t = new Texture(Gdx.files.internal("electric-weapon-picked.png"));
 				//Image weapon = new Image(t);
@@ -331,9 +331,9 @@ public class GameStage extends Stage {
 				food.change(newXpos, newYpos,FoodType.SPIKE);
 
 			//float fontScale = (dims.y-10)/64;
-			Vector2 dims = WorldUtils.viewportToScreen(new Vector2(Constants.VIEWPORT_WIDTH-3*Constants.MARGIN,Constants.GP_BOARD), camera);
+			//Vector2 dims = WorldUtils.viewportToScreen(new Vector2(Constants.VIEWPORT_WIDTH-3*Constants.MARGIN,Constants.GP_BOARD), camera);
 
-			float fontScale = (dims.y-10)/64;
+			//float fontScale = (dims.y-10)/64;
 
 			//scoreLabel.setAlignment(Align.right);
 
@@ -585,8 +585,9 @@ public class GameStage extends Stage {
 
 	private void setupWorld() {
 		world = WorldUtils.createWorld();
-		margins = WorldUtils.viewportToScreen(new Vector2(Constants.TOP_MARGIN,Constants.MARGIN), camera);
-		screenDims = WorldUtils.viewportToScreen(new Vector2(Constants.VIEWPORT_WIDTH,Constants.VIEWPORT_HEIGHT), camera);
+		margins = WorldUtils.viewportToScreen(new Vector2(Constants.TOP_MARGIN, Constants.MARGIN), camera);
+		screenDims = WorldUtils.viewportToScreen(new Vector2(Constants.VIEWPORT_WIDTH, Constants.VIEWPORT_HEIGHT), camera);
+		wepDims = WorldUtils.viewportToScreen(new Vector2(Constants.WEP_SIZE,Constants.WEP_SIZE), camera);
 		bgWood = new BgGameStage(screenDims, margins,camera);
 		addActor(bgWood);
 	}

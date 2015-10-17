@@ -20,6 +20,8 @@ public class Constants {
     public static final int BALL_RADIUS = 5;
     public static final float BALL_SPEED = 1.4f;
     public static final float BALL_SPEED2 = 2.0f;
+
+    public static final float WEP_SIZE = 20;
     
     public static final int FOOD_WIDTH = 8;
     public static final int FOOD_HEIGHT = 8;
