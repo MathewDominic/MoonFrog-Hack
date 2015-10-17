@@ -29,6 +29,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 //import com.badlogic.gdx.scenes.scene2d.utils.Align;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.myappstack.gball.MyGballGame;
 import com.myappstack.gball.PowerupsManager;
@@ -55,25 +56,23 @@ public class GameStage extends Stage {
 	private MyGballGame gballGame;
 
 	private World world;
-	//private Body wallLeft, wallRight, wallBottom, wallTop;
 	private Vector2 touchStart;
 	private Vector2 touchEnd;
 
 	private Line line;
 	private Food food;
 	private Ball blueBall;
-	//private Ball redBall;
+	private Weapon electric, flame, gun, spike;
+
 	private BgGameStage bgWood;
-	private Texture gun1t, gun2t, electric1t, electric2t, spike1t, spike2t, flamethrower1t, flamethrower2t;
 	private Vector2 margins,screenDims, wepDims;
 	
 	private Integer score;
 	private Table table;
 	private Label scoreLabel;
-	private Label modeLabel;
 	private Label timeLabel;
 	
-	private Image pScoreBg, weapon,gun1, gun2, electric1, electric2, spike1, spike2, flamethrower1, flamethrower2;
+	private Image pScoreBg;
 	private Button pReplay;
 	private Button pMenu;
 	private Label pScore;
@@ -81,9 +80,9 @@ public class GameStage extends Stage {
 	public Weapon wep;
 
 	//private ParticleEffect redExpo, blueExpo;
-	private Sound breakBallSound;
-	private Sound pointSound;
-	private boolean drawDestroyPeffect, activeGun, activeSpike, activeElectric, activeFire;
+	//private Sound breakBallSound;
+	//private Sound pointSound;
+	//private boolean drawDestroyPeffect, activeGun, activeSpike, activeElectric, activeFire;
 
 	private final float TIME_STEP = 1 / 300f;
 	private float accumulator = 0f;
@@ -104,11 +103,12 @@ public class GameStage extends Stage {
     	setupBall();
     	setupFood(Constants.VIEWPORT_WIDTH / 2, Constants.VIEWPORT_HEIGHT / 2);
     	setupScore();
+		setUpWep();
     	Gdx.input.setInputProcessor(this);
         renderer = new Box2DDebugRenderer();
         
-        breakBallSound = Gdx.audio.newSound(Gdx.files.internal("sounds/glass_break.ogg"));
-        pointSound = Gdx.audio.newSound(Gdx.files.internal("sounds/point.mp3"));
+        //breakBallSound = Gdx.audio.newSound(Gdx.files.internal("sounds/glass_break.ogg"));
+        //pointSound = Gdx.audio.newSound(Gdx.files.internal("sounds/point.mp3"));
         
         /*redExpo = new ParticleEffect();
         redExpo.load(Gdx.files.internal("effects/expored.p"), Gdx.files.internal("effects"));
@@ -118,11 +118,11 @@ public class GameStage extends Stage {
         blueExpo.load(Gdx.files.internal("effects/expoblue.p"), Gdx.files.internal("effects"));
         blueExpo.allowCompletion(); */
         
-        drawDestroyPeffect = false;
-		activeElectric=false;
-		activeGun=false;
-		activeSpike=false;
-		activeFire=false;
+//        drawDestroyPeffect = false;
+//		activeElectric=false;
+//		activeGun=false;
+//		activeSpike=false;
+//		activeFire=false;
         
         touchStart = touchEnd = null;
 		startTime= TimeUtils.millis();
@@ -146,185 +146,70 @@ public class GameStage extends Stage {
 			accumulator -= TIME_STEP;
 		}
 		currentTime = (TimeUtils.millis() - startTime)/1000;
-		if(currentTime == 60)
+		//if(currentTime == 60)
 			//showGameOverPoupUp();
 		if(this.gOver){
 			return;
 		}
 		if(TimeUtils.timeSinceMillis(gun_active_time) < 2000) {
-			activeGun=true;
-			gun1.remove();
-			System.out.println("Gun Active");
-			gun1t = new Texture(Gdx.files.internal("gun2.png"));
-			gun1 = new Image(gun1t);
-			gun1.setSize(wepDims.x, wepDims.y);
-			gun1.setPosition(screenDims.x-wepDims.x, screenDims.y-wepDims.y);
-			//wep.change(true, Weapon.WeaponType.RED);
-			//addActor(gun1);
-
+			gun.changeState(true);
 		}
-		else
-		{
-			if(gun1 == null || activeGun == true)
-			{
-				gun1t = new Texture(Gdx.files.internal("gun1.png"));
-				gun1 = new Image(gun1t);
-				gun1.setSize(wepDims.x, wepDims.y);
-				gun1.setPosition(screenDims.x-wepDims.x, screenDims.y-wepDims.y);
-				addActor(gun1);
-				//wep.change(false, Weapon.WeaponType.RED);
-				activeGun=false;
-			}
+		else if(gun.isActive()) {
+			gun.changeState(false);
+
 		}
 		if(TimeUtils.timeSinceMillis(spike_active_time) < 2000) {
-			activeSpike = true;
-			spike1.remove();
-			System.out.println("Spike Active");
-			spike1t = new Texture(Gdx.files.internal("spike2.png"));
-			spike1 = new Image(spike1t);
-			spike1.setSize(wepDims.x, wepDims.y);
-			spike1.setPosition(screenDims.x - wepDims.x, 0);
-			addActor(spike1);
+			spike.changeState(true);
 		}
-		else
-		{
-			if(spike1 == null || activeSpike) {
-				spike1t = new Texture(Gdx.files.internal("spike1.png"));
-				spike1 = new Image(spike1t);
-				spike1.setSize(wepDims.x, wepDims.y);
-				spike1.setPosition(screenDims.x-wepDims.x, 0);
-				addActor(spike1);
-				activeSpike=false;
-			}
+		else if(spike.isActive()) {
+				spike.changeState(false);
+
 		}
 		if(TimeUtils.timeSinceMillis(electric_active_time) < 2000) {
-			activeElectric = true;
-			electric1.remove();
-			System.out.println("Electric Active");
-			electric1t = new Texture(Gdx.files.internal("electric2.png"));
-			electric1 = new Image(electric1t);
-			electric1.setSize(wepDims.x, wepDims.y);
-			electric1.setPosition(0, screenDims.y-wepDims.y);
-			addActor(electric1);
+			electric.changeState(true);
 		}
-		else
-		{
-			if(electric1 == null || activeElectric) {
-				electric1t = new Texture(Gdx.files.internal("electric1.png"));
-				electric1 = new Image(electric1t);
-				electric1.setSize(wepDims.x, wepDims.y);
-				electric1.setPosition(0, screenDims.y-wepDims.y);
-				addActor(electric1);
-				activeElectric = false;
-			}
+		else if( electric.isActive()) {
+				electric.changeState(false);
 		}
 		if(TimeUtils.timeSinceMillis(fire_active_time) < 2000) {
-			activeFire = true;
-			flamethrower1.remove();
-			//flamethrower2.remove();
-			System.out.println("Fire Active");
-			flamethrower1t = new Texture(Gdx.files.internal("flamethrowe2.png"));
-			flamethrower2t = new Texture(Gdx.files.internal("firegif.gif"));
-			flamethrower1 = new Image(flamethrower1t);
-
-			flamethrower2 = new Image(flamethrower2t);
-
-
-			flamethrower1.setSize(wepDims.x, wepDims.y);
-
-			flamethrower1.setPosition(0, 0);
-			addActor(flamethrower1);
-			addActor(flamethrower2);
+			flame.changeState(true);
 		}
-		else
-		{
-			if(flamethrower2 != null)
-				flamethrower2.remove();
-			if(flamethrower1 == null || activeFire) {
-				flamethrower1t = new Texture(Gdx.files.internal("flamethrower1.png"));
-				flamethrower1 = new Image(flamethrower1t);
-				flamethrower1.setSize(wepDims.x, wepDims.y);
-				flamethrower1.setPosition(0, 0);
-				addActor(flamethrower1);
-				activeFire = false;
-			}
+		else if(flame.isActive()) {
+				flame.changeState(false);
 		}
 		
 		// TODO: Implement interpolation
 		
 		handleLineCollision();
-		//blueBall.getBounds().overlaps(redBall.getBounds())
 
-		//COLISION
-		/*
-		if(blueBall.collidedWith(redBall.getPos())){
-			if(blueBall.getState() == Ball.State.GOTHROUGH || redBall.getState() == Ball.State.GOTHROUGH){
-				System.out.println("not out : go through");
-			}
-			else{
-				System.out.println("game over");
-				//this.gOver = true;
-				showGameOverPoupUp();
-				//this.gballGame.setScreen(new GameOverScreen(gballGame,score));
-			}
-			
-		} */
 		if (blueBall.getBounds().overlaps(food.getBounds()))
 		{
-			if(food.getType() == FoodType.BLUE)
+			if(food.getType() == FoodType.GUN)
 			{
 				score++;
 				scoreLabel.setText(score.toString());
 				blueBall.gotFoodAnimation();
-				pointSound.play(1f);
+				//pointSound.play(1f);
 			}
-			else
-			{
-				/*expo.setPosition(food.pos.x, food.pos.y);
-				redExpo.update(delta);
-				redExpo.start(); */
-				breakBallSound.play(1.0f);
-			}
+
 			System.out.println("Collided");
-			if(food.getType() == FoodType.BLUE)
+			if(food.getType() == FoodType.GUN)
 			{
-				//t = new Texture(Gdx.files.internal("gun-weapon-picked.png"));
-				//Image weapon = new Image(t);
-				//weapon.setPosition(705, 388);
-				//System.out.println(Gdx.graphics.getHeight() + " " + Gdx.graphics.getWidth());
-				//weapon.setSize(208,150);
 				gun_active_time=TimeUtils.millis();
-				//addActor(weapon);
 			}
-			else if(food.getType() == FoodType.RED)
+			else if(food.getType() == FoodType.FLAME)
 			{
-				//t = new Texture(Gdx.files.internal("flamethrower-picked.png"));
-				//Image weapon = new Image(t);
-				//weapon.setPosition(100,100);
-				//System.out.println(Gdx.graphics.getHeight() + " " + Gdx.graphics.getWidth());
-				//weapon.setSize(208,150);
+
 				fire_active_time=TimeUtils.millis();
-				//addActor(weapon);
 			}
 			else if(food.getType() == FoodType.SPIKE)
 			{
-				//t = new Texture(Gdx.files.internal("spike-weapon-picked.png"));
-				//Image weapon = new Image(t);
-				//weapon.setPosition(705,100);
-				//System.out.println(Gdx.graphics.getHeight() + " " + Gdx.graphics.getWidth());
-				//weapon.setSize(208,150);
+
 				spike_active_time=TimeUtils.millis();
-				//addActor(weapon);
 			}
 			else if(food.getType() == FoodType.ELECTRIC)
 			{
-				//t = new Texture(Gdx.files.internal("electric-weapon-picked.png"));
-				//Image weapon = new Image(t);
-				//weapon.setPosition(100, 388);
-				//System.out.println(Gdx.graphics.getHeight() + " " + Gdx.graphics.getWidth());
-				//weapon.setSize(208,150);
 				electric_active_time=TimeUtils.millis();
-				//addActor(weapon);
 			}
 
 			int newXpos = MathUtils.random(Constants.MARGIN+1, Constants.VIEWPORT_WIDTH
@@ -334,52 +219,21 @@ public class GameStage extends Stage {
 			int foodType = MathUtils.floor(MathUtils.random(0,4));
 			System.out.println(foodType);
 			if( foodType == 0)
-				food.change(newXpos, newYpos,FoodType.RED);
+				food.change(newXpos, newYpos,FoodType.FLAME);
 			else if(foodType == 1)
-				food.change(newXpos, newYpos,FoodType.BLUE);
+				food.change(newXpos, newYpos,FoodType.GUN);
 			else if(foodType == 2)
 				food.change(newXpos, newYpos,FoodType.ELECTRIC);
 			else
 				food.change(newXpos, newYpos,FoodType.SPIKE);
 
-			//float fontScale = (dims.y-10)/64;
-			//Vector2 dims = WorldUtils.viewportToScreen(new Vector2(Constants.VIEWPORT_WIDTH-3*Constants.MARGIN,Constants.GP_BOARD), camera);
 
-			//float fontScale = (dims.y-10)/64;
-
-			//scoreLabel.setAlignment(Align.right);
-
-			/*modeLabel = new Label("Mode : Normal",style);
-			modeLabel.setText("Mode : Normal");
-			modeLabel.setFontScale(fontScale);
-			modeLabel.setColor(Color.WHITE); */
 
 
 
 		}
-		/*else if (redBall.getBounds().overlaps(food.getBounds())) {
-			if(food.getType() == FoodType.RED){
-				score++;
-				scoreLabel.setText(score.toString());
-				redBall.gotFoodAnimation();
-				pointSound.play(1f);
-			}
-			else{
-				blueExpo.setPosition(food.pos.x, food.pos.y);
-				blueExpo.update(delta);
-				blueExpo.start();
-				breakBallSound.play(1.0f);
-			}
-			System.out.println("Collided");
-			int newXpos = MathUtils.random(Constants.MARGIN + 1, Constants.VIEWPORT_WIDTH
-					- Constants.FOOD_WIDTH - Constants.MARGIN - 1);
-			int newYpos = MathUtils.random(Constants.MARGIN +1, Constants.VIEWPORT_HEIGHT
-					- Constants.FOOD_HEIGHT - Constants.TOP_MARGIN - 1);
-			
-			
-			food.change(newXpos, newYpos,FoodType.BLUE);
 
-		} */
+		timeLabel.setText(String.valueOf(60-currentTime));
 
 	}
 
@@ -399,19 +253,18 @@ public class GameStage extends Stage {
 		scoreLabel.setFontScale(fontScale);
 		scoreLabel.setColor(Color.WHITE);
 		//scoreLabel.setAlignment(Align.right);
-		
-		modeLabel = new Label("Mode : Normal",style);
-		modeLabel.setText("Mode : Normal");
-		modeLabel.setFontScale(fontScale);
-		modeLabel.setColor(Color.WHITE);
+
+		timeLabel = new Label("",style);
+		timeLabel.setFontScale(fontScale);
+		timeLabel.setColor(Color.WHITE);
 		
 		table = new Table();
 		//table.setDebug(true);
 		table.setSize(dims.x, dims.y);
 		table.setPosition(pos.x, pos.y);
 		//table.center();
-		//table.add(scoreLabel).expandX().align(Align.right).height(dims.y);
-		//table.add(modeLabel).expandX().height(dims.y);
+		table.add(scoreLabel).expandX().align(Align.right).height(dims.y);
+		table.add(timeLabel).expandX().height(dims.y);
 		
 		addActor(table);
 	}
@@ -576,7 +429,7 @@ public class GameStage extends Stage {
 	
 	 
 	private void setupFood(int x, int y) {
-		food = new Food(world, camera, x, y,Food.FoodType.BLUE);
+		food = new Food(world, camera, x, y, FoodType.GUN);
 		addActor(food);	
 	}
 	/*private void activateWeapon()
@@ -604,6 +457,18 @@ public class GameStage extends Stage {
 		addActor(bgWood);
 	}
 
+	private void setUpWep(){
+		gun = new Weapon(world,camera, Weapon.WeaponType.GUN,new Vector2(screenDims.x-wepDims.x, screenDims.y-wepDims.y),wepDims);
+		flame = new Weapon(world,camera, Weapon.WeaponType.FLAME,new Vector2(0,0),wepDims);
+		spike = new Weapon(world,camera, Weapon.WeaponType.SPIKE,new Vector2(screenDims.x - wepDims.x, 0),wepDims);
+		electric = new Weapon(world,camera, Weapon.WeaponType.ELECTRIC,new Vector2(0, screenDims.y-wepDims.y),wepDims);
+
+		addActor(gun);
+		addActor(flame);
+		addActor(spike);
+		addActor(electric);
+	}
+
 	private void setupCamera() {
 		camera = new OrthographicCamera(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
 		camera.position.set(camera.viewportWidth / 2,
@@ -612,22 +477,6 @@ public class GameStage extends Stage {
 	}
 	
 
-	@Override
-	public void draw() {
-		super.draw();
-		getBatch().begin();
-		/*blueExpo.update(Gdx.graphics.getDeltaTime());
-		blueExpo.draw(getBatch());
-		
-		redExpo.update(Gdx.graphics.getDeltaTime());
-		redExpo.draw(getBatch()); */
-		BitmapFont font = new BitmapFont(Gdx.files.internal("fonts/hobostd.fnt"),
-				Gdx.files.internal("fonts/hobostd.png"), false);
-		font.draw(getBatch(), String.valueOf(60-currentTime), 200, 200);
-
-		getBatch().end();
-		//renderer.render(world, camera.combined);
-	}
 
 	public Vector2 screenToViewport(Vector2 v) {
 		Vector3 vtemp = camera.unproject(new Vector3(v.x, v.y, 0));

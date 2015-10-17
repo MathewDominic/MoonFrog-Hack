@@ -14,7 +14,7 @@ public class StartScreenBackground extends Actor {
 	public StartScreenBackground(Vector2 pos,Vector2 dims){
 		this.pos = pos;
 		this.dims = dims;
-		bg = new Texture(Gdx.files.internal("simple-grey-background.jpg"));
+		bg = new Texture(Gdx.files.internal("planb.jpg"));
 		//bg.setWrap(TextureWrap.Repeat, TextureWrap.Repeat); 
 	}
 

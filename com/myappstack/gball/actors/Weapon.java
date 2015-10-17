@@ -21,12 +21,15 @@ public class Weapon extends Actor
     OrthographicCamera camera;
     private WeaponType type;
     private Sprite sprite;
-    Image weapon;
+    private Sprite active;
+    private Sprite normal;
+    private boolean isPicked;
+
     Rectangle bounds;
     Circle bound;
     public static enum WeaponType {
-        RED,
-        BLUE,
+        FLAME,
+        GUN,
         ELECTRIC,
         SPIKE;
     }
@@ -34,74 +37,67 @@ public class Weapon extends Actor
     private int xVal;
     private int yVal;
     Vector2 dims;
-    Texture gun, gunPick, fire, firePick, electric, electricPick, spike, spikePick;
-    public Weapon(World world,OrthographicCamera camera,WeaponType type)
+    Texture actveT, normalT;
+
+    public Weapon(World world,OrthographicCamera camera,WeaponType type,Vector2 pos, Vector2 dims)
     {
         this.camera = camera;
         this.type = type;
+        this.pos = pos;
+        this.dims = dims;
+        this.isPicked = false;
+        this.bounds = new Rectangle();
+        this.bound = new Circle();
 
         //dims = WorldUtils.viewportToScreen(new Vector2(Constants.FOOD_WIDTH, Constants.FOOD_HEIGHT), camera);
         //pos = WorldUtils.viewportToScreen(new Vector2(x,y), camera);
         Texture t = null;
-        if(this.type == WeaponType.RED)
+        if(this.type == WeaponType.FLAME)
         {
-            fire = new Texture(Gdx.files.internal("flamethrower1.png"));
-            firePick = new Texture(Gdx.files.internal("flamethrowe2.png"));
+            actveT = new Texture(Gdx.files.internal("flamethrower1.png"));
+            normalT = new Texture(Gdx.files.internal("flamethrowe2.png"));
         }
         else if(this.type == WeaponType.ELECTRIC)
         {
-            electric = new Texture(Gdx.files.internal("electric1.png"));
-            electricPick = new Texture(Gdx.files.internal("electric2.png"));
+            actveT = new Texture(Gdx.files.internal("electric1.png"));
+            normalT = new Texture(Gdx.files.internal("electric2.png"));
         }
         else if(this.type == WeaponType.SPIKE)
         {
-            spike = new Texture(Gdx.files.internal("spike1.png"));
-            spikePick = new Texture(Gdx.files.internal("spike2.png"));
+            actveT = new Texture(Gdx.files.internal("spike1.png"));
+            normalT = new Texture(Gdx.files.internal("spike2.png"));
         }
         else
         {
-            gun = new Texture(Gdx.files.internal("gun1.png"));
-            gunPick = new Texture(Gdx.files.internal("gun2.png"));
+            actveT = new Texture(Gdx.files.internal("gun1.png"));
+            normalT = new Texture(Gdx.files.internal("gun2.png"));
         }
 
+        active = new Sprite(actveT);
+        normal = new Sprite(normalT);
 
+        active.setPosition(pos.x, pos.y);
+        active.setSize(dims.x, dims.y);
 
+        normal.setPosition(pos.x, pos.y);
+        normal.setSize(dims.x, dims.y);
 
+        Vector2 xyval = WorldUtils.screenToViewport(pos,camera);
+        this.xVal = (int) xyval.x;
+        this.yVal = (int) xyval.y;
 
-    }
-    public void change(boolean isPicked, WeaponType type)
-    {
-        if(isPicked == false)
-        {
-            if (type == WeaponType.RED) {
-                sprite = new Sprite(fire);
-            } else if (type == WeaponType.SPIKE) {
-                sprite = new Sprite(spike);
-            } else if (type == WeaponType.ELECTRIC) {
-                sprite = new Sprite(electric);
-            } else
-            {
-                sprite = new Sprite(gun);
-            }
-        }
-        else
-        {
-            if (type == WeaponType.RED) {
-                sprite = new Sprite(fire);
-            } else if (type == WeaponType.SPIKE) {
-                sprite = new Sprite(spike);
-            } else if (type == WeaponType.ELECTRIC) {
-                sprite = new Sprite(electric);
-            } else
-            {
-                sprite = new Sprite(gun);
-            }
-        }
-        pos = WorldUtils.viewportToScreen(new Vector2(this.xVal,this.yVal), camera);
-        sprite.setPosition(pos.x, pos.y);
-        sprite.setSize(dims.x, dims.y);
         bounds.set(this.xVal,this.yVal,Constants.WEP_SIZE,Constants.WEP_SIZE);
         bound.set(this.xVal+Constants.WEP_SIZE/2, this.yVal+Constants.WEP_SIZE/2, Constants.WEP_SIZE);
+    }
+
+
+    public void changeState(boolean isPicked)
+    {
+        this.isPicked = isPicked;
+    }
+
+    public boolean isActive(){
+        return  this.isPicked;
     }
 
 
@@ -109,6 +105,11 @@ public class Weapon extends Actor
     @Override
     public void draw(Batch batch, float parentAlpha)
     {
-        sprite.draw(batch);
+        if(isPicked){
+            active.draw(batch);
+        }
+        else{
+            normal.draw(batch);
+        }
     }
 }

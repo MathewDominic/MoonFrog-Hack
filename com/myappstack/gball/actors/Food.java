@@ -23,8 +23,8 @@ public class Food extends Actor{
 
 	OrthographicCamera camera;
 	public static enum FoodType {
-		RED,
-		BLUE,
+		FLAME,
+		GUN,
 		ELECTRIC,
 		SPIKE;
 	}
@@ -48,7 +48,7 @@ public class Food extends Actor{
 		dims = WorldUtils.viewportToScreen(new Vector2(Constants.FOOD_WIDTH, Constants.FOOD_HEIGHT),camera);
 		pos = WorldUtils.viewportToScreen(new Vector2(x,y), camera);
 		Texture t = null;
-		if(this.type == FoodType.RED){
+		if(this.type == FoodType.FLAME){
 			t = new Texture(Gdx.files.internal("fire.png"));
 		}
 		else if(this.type == FoodType.ELECTRIC)
@@ -59,7 +59,7 @@ public class Food extends Actor{
 		{
 			t = new Texture(Gdx.files.internal("spike.png"));
 		}
-		else if (this.type == FoodType.BLUE){
+		else if (this.type == FoodType.GUN){
 			t = new Texture(Gdx.files.internal("gun.png"));
 		}
 		
@@ -81,7 +81,7 @@ public class Food extends Actor{
 		this.yVal = yVal;
 		this.type = type;
 		Texture t;
-		if(this.type == FoodType.RED)
+		if(this.type == FoodType.FLAME)
 		{
 			t = new Texture(Gdx.files.internal("fire.png"));
 		}
