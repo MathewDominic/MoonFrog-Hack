@@ -71,13 +71,10 @@ public class GameStage extends Stage {
 	private Table table;
 	private Label scoreLabel;
 	private Label timeLabel;
-	
-	private Image pScoreBg;
-	private Button pReplay;
-	private Button pMenu;
-	private Label pScore;
+
 	private long gun_active_time, fire_active_time, electric_active_time, spike_active_time, startTime, currentTime;
-	public Weapon wep;
+
+	private Image leftScore, rightScore;
 
 	//private ParticleEffect redExpo, blueExpo;
 	//private Sound breakBallSound;
@@ -107,23 +104,6 @@ public class GameStage extends Stage {
     	Gdx.input.setInputProcessor(this);
         renderer = new Box2DDebugRenderer();
         
-        //breakBallSound = Gdx.audio.newSound(Gdx.files.internal("sounds/glass_break.ogg"));
-        //pointSound = Gdx.audio.newSound(Gdx.files.internal("sounds/point.mp3"));
-        
-        /*redExpo = new ParticleEffect();
-        redExpo.load(Gdx.files.internal("effects/expored.p"), Gdx.files.internal("effects"));
-        redExpo.allowCompletion();
-        
-        blueExpo = new ParticleEffect();
-        blueExpo.load(Gdx.files.internal("effects/expoblue.p"), Gdx.files.internal("effects"));
-        blueExpo.allowCompletion(); */
-        
-//        drawDestroyPeffect = false;
-//		activeElectric=false;
-//		activeGun=false;
-//		activeSpike=false;
-//		activeFire=false;
-        
         touchStart = touchEnd = null;
 		startTime= TimeUtils.millis();
 		gun_active_time=2500;
@@ -146,8 +126,9 @@ public class GameStage extends Stage {
 			accumulator -= TIME_STEP;
 		}
 		currentTime = (TimeUtils.millis() - startTime)/1000;
-		//if(currentTime == 60)
-			//showGameOverPoupUp();
+		if(currentTime == 10)
+			gameOver();
+
 		if(this.gOver){
 			return;
 		}
@@ -267,6 +248,18 @@ public class GameStage extends Stage {
 		table.add(timeLabel).expandX().height(dims.y);
 		
 		addActor(table);
+
+		Texture sleftT = new Texture(Gdx.files.internal("score-left.png"));
+		Texture srightT = new Texture(Gdx.files.internal("score-right.png"));
+
+		leftScore = new Image(sleftT);
+		rightScore = new Image(srightT);
+
+		leftScore.setSize(screenDims.x/2,screenDims.y);
+		rightScore.setSize(screenDims.x/2,screenDims.y);
+
+		leftScore.setPosition(-screenDims.x / 2, 0);
+		rightScore.setPosition(screenDims.x,0);
 	}
 
 
@@ -336,88 +329,30 @@ public class GameStage extends Stage {
 	}
 	
 	
-	
-	private void showGameOverPoupUp(){
-		Vector2 screenDims = WorldUtils.viewportToScreen(new Vector2(Constants.VIEWPORT_WIDTH, 
-				Constants.VIEWPORT_HEIGHT),camera);
-		
-		Texture tPScoreBg = new Texture(Gdx.files.internal("whitebg.png"));
-		Texture tReplay = new Texture(Gdx.files.internal("score_replay.png"));
-		Texture tMenu = new Texture(Gdx.files.internal("score_menu.png"));
-		BitmapFont font = new BitmapFont(Gdx.files.internal("fonts/hobostd.fnt"),
-                Gdx.files.internal("fonts/hobostd.png"), false);
-		
-		//redBall.remove();
+	private void gameOver(){
 		blueBall.remove();
-		food.remove();
+		scoreLabel.remove();
+		timeLabel.remove();
 		table.remove();
-		
-		pScoreBg = new Image(tPScoreBg);
-		//pScoreBg.setSize(screenDims.x*.75f, screenDims.y*.75f);
-		//pScoreBg.setPosition(screenDims.x/8, screenDims.y/8);
-		//addActor(pScoreBg);
-		float sq = screenDims.x*.75f;
-		
-		LabelStyle style = new LabelStyle();
-		style.font = font;
-		pScore = new Label(score.toString(), style);
-		float fontScale = sq > 64 ? sq/(4*64) : 1;
-		pScore.setFontScale(fontScale, fontScale);
-		
-		ButtonStyle bPReplayStyle = new ButtonStyle();
-		Image tmp1 = new Image(tReplay);
-		pReplay = new Button(tmp1.getDrawable(),tmp1.getDrawable(),tmp1.getDrawable());
-		Image tmp2 = new Image(tMenu);
-		pMenu = new Button(tmp2.getDrawable(),tmp2.getDrawable(),tmp2.getDrawable());
-		
-		Table pOptionsTable = new Table();
-		pOptionsTable.add(pReplay).expandX();
-		pOptionsTable.add(pMenu).expandX();
-		
-		Table pTable = new Table();
-		
-		pTable.setSize(sq, sq);
-		//pTable.setPosition(screenDims.x/2 - sq/2, screenDims.y/2 - sq/2);
-		pTable.setPosition(screenDims.x/2 - sq/2, screenDims.y);
-		pTable.setBackground(pScoreBg.getDrawable());
-		
-		//pTable.add(pScore).height(sq/4).align(Align.center);
-		pTable.row();
-		pTable.add(pOptionsTable);
-		pTable.setDebug(true);
-		pTable.setPosition(screenDims.x/2 - sq/2, screenDims.y/2 - sq/2);
-		addActor(pTable);
-		
-		//addActor(pScoreBg);
-		
-		
-		//pTable.addAction(Actions.sequence(Actions.alpha(0f),Actions.fadeIn(4f)));
-		/*pTable.addAction(
-				Actions.sequence(
-						Actions.moveTo(screenDims.x/2 - sq/2, screenDims.y/2 - sq/2 , 0.8f)
-						)
-		);*/
-		
-		pReplay.addListener(new InputListener(){
-			 public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-			        System.out.println("down");
-			        replay();
-			        return true;
-			    }
-		});
-		
-		pMenu.addListener(new InputListener(){
-			 public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-			        System.out.println("down");
-			        goToMainMenu();
-			        return true;
-			    }
-		});
-		
-		pReplay.addAction(Actions.sequence(Actions.alpha(0f),Actions.fadeIn(3f)));
-		pMenu.addAction(Actions.sequence(Actions.alpha(0f),Actions.fadeIn(3f)));
-		
+
+		addActor(leftScore);
+		addActor(rightScore);
+
+		leftScore.addAction(Actions.sequence(Actions.moveTo(0, 0, 1.0f),dispScore));
+		rightScore.addAction(Actions.sequence(Actions.moveTo(screenDims.x/2,0,1.0f)));
 	}
+
+	Action dispScore = new Action() {
+		@Override
+		public boolean act(float delta) {
+			Vector2 dims = WorldUtils.viewportToScreen(new Vector2(30,30), camera);
+			addActor(scoreLabel);
+			float fontScale = (dims.y-10)/64;
+			scoreLabel.setFontScale(fontScale);
+			scoreLabel.setPosition(screenDims.x/2- 10, screenDims.y/2 - 10);
+			return false;
+		}
+	};
 	
 	private void goToMainMenu(){
 		this.gballGame.setScreen(new StartScreen(this.gballGame));
