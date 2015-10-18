@@ -252,11 +252,12 @@ public class GameStage extends Stage {
 		
 		table = new Table();
 		//table.setDebug(true);
-		table.setSize(dims.x, dims.y);
-		table.setPosition(pos.x, pos.y);
+		table.setSize(screenDims.x, dims.y);
+		table.setPosition(0, pos.y);
 		//table.center();
-		table.add(scoreLabel).expandX().align(Align.right).height(dims.y);
-		table.add(timeLabel).expandX().height(dims.y);
+		table.add(timeLabel).expandX().align(Align.center).height(dims.y);
+		table.add(scoreLabel).expandX().align(Align.center).height(dims.y);
+
 		
 		addActor(table);
 

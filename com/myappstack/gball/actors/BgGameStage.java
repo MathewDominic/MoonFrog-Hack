@@ -30,10 +30,10 @@ public class BgGameStage extends Actor{
 		//bg= new Texture( pixmap );
 		bg = new Texture(Gdx.files.internal("planb.jpg"));
 
-		bottomY = margins.y;
-		leftX = margins.y;
-		width = screenDims.x - 2*margins.y;
-		height= screenDims.y - margins.x - margins.y;
+		bottomY = 0;
+		leftX = 0;
+		width = screenDims.x;
+		height= screenDims.y;
 	}
 
 	@Override

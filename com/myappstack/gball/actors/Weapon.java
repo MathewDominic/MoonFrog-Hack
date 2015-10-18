@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.myappstack.gball.utils.Constants;
 import com.myappstack.gball.utils.WorldUtils;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -23,7 +24,9 @@ public class Weapon extends Actor
     private Sprite sprite;
     private Sprite active;
     private Sprite normal;
-    private boolean isPicked, canChangeScore1;
+    private boolean isPicked, canChangeScore1, hasEffect;
+
+    private Sprite effect;
 
     Circle bounds;
     public static enum WeaponType {
@@ -36,7 +39,7 @@ public class Weapon extends Actor
     private int xVal;
     private int yVal;
     Vector2 dims;
-    Texture actveT, normalT;
+    Texture actveT, normalT, effectT;
 
     public Weapon(World world,OrthographicCamera camera,WeaponType type,Vector2 pos, Vector2 dims)
     {
@@ -48,6 +51,7 @@ public class Weapon extends Actor
         this.canChangeScore1 = false;
         this.bounds = new Circle();
 
+
         //dims = WorldUtils.viewportToScreen(new Vector2(Constants.FOOD_WIDTH, Constants.FOOD_HEIGHT), camera);
         //pos = WorldUtils.viewportToScreen(new Vector2(x,y), camera);
         Texture t = null;
@@ -55,11 +59,23 @@ public class Weapon extends Actor
         {
             actveT = new Texture(Gdx.files.internal("flamethrower1.png"));
             normalT = new Texture(Gdx.files.internal("flamethrowe2.png"));
+            effectT = new Texture(Gdx.files.internal("fire_eff.png"));
+            this.hasEffect = true;
+
+            effect = new Sprite(effectT);
+            effect.setPosition(dims.x/2,dims.y/2);
+            effect.setSize(dims.x,dims.y);
         }
         else if(this.type == WeaponType.ELECTRIC)
         {
             actveT = new Texture(Gdx.files.internal("electric1.png"));
             normalT = new Texture(Gdx.files.internal("electric2.png"));
+            effectT = new Texture(Gdx.files.internal("shock.png"));
+            this.hasEffect = true;
+
+            effect = new Sprite(effectT);
+            effect.setPosition(dims.x/2,pos.y-dims.y/2);
+            effect.setSize(dims.x,dims.y);
         }
         else if(this.type == WeaponType.SPIKE)
         {
@@ -120,6 +136,10 @@ public class Weapon extends Actor
         }
         else{
             normal.draw(batch);
+        }
+
+        if(this.hasEffect && this.isActive()){
+            effect.draw(batch);
         }
     }
 }
