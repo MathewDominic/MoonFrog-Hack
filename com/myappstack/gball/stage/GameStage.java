@@ -77,8 +77,7 @@ public class GameStage extends Stage {
 	private Image leftScore, rightScore;
 
 	//private ParticleEffect redExpo, blueExpo;
-	//private Sound breakBallSound;
-	//private Sound pointSound;
+	private Sound gunSound,flameSound,electricSound,spikeSound;
 	//private boolean drawDestroyPeffect, activeGun, activeSpike, activeElectric, activeFire;
 
 	private final float TIME_STEP = 1 / 300f;
@@ -127,32 +126,6 @@ public class GameStage extends Stage {
 		if(this.gOver){
 			return;
 		}
-		if(TimeUtils.timeSinceMillis(gun_active_time) < timeActive) {
-			gun.changeState(true);
-		}
-		else if(gun.isActive()) {
-			gun.changeState(false);
-
-		}
-		if(TimeUtils.timeSinceMillis(spike_active_time) < timeActive) {
-			spike.changeState(true);
-		}
-		else if(spike.isActive()) {
-				spike.changeState(false);
-
-		}
-		if(TimeUtils.timeSinceMillis(electric_active_time) < timeActive) {
-			electric.changeState(true);
-		}
-		else if( electric.isActive()) {
-				electric.changeState(false);
-		}
-		if(TimeUtils.timeSinceMillis(fire_active_time) < timeActive) {
-			flame.changeState(true);
-		}
-		else if(flame.isActive()) {
-				flame.changeState(false);
-		}
 		
 		// TODO: Implement interpolation
 		
@@ -175,7 +148,6 @@ public class GameStage extends Stage {
 			}
 			else if(food.getType() == FoodType.FLAME)
 			{
-
 				fire_active_time=TimeUtils.millis();
 			}
 			else if(food.getType() == FoodType.SPIKE)
@@ -207,6 +179,37 @@ public class GameStage extends Stage {
 
 
 
+		}
+
+		if(TimeUtils.timeSinceMillis(gun_active_time) < timeActive) {
+			gun.changeState(true);
+			gunSound.play(1.0f);
+		}
+		else if(gun.isActive()) {
+			gun.changeState(false);
+
+		}
+		if(TimeUtils.timeSinceMillis(spike_active_time) < timeActive) {
+			spike.changeState(true);
+			spikeSound.play(1.0f);
+		}
+		else if(spike.isActive()) {
+			spike.changeState(false);
+
+		}
+		if(TimeUtils.timeSinceMillis(electric_active_time) < timeActive) {
+			electric.changeState(true);
+			electricSound.play(1.0f);
+		}
+		else if( electric.isActive()) {
+			electric.changeState(false);
+		}
+		if(TimeUtils.timeSinceMillis(fire_active_time) < timeActive) {
+			flame.changeState(true);
+			flameSound.play(1.0f);
+		}
+		else if(flame.isActive()) {
+			flame.changeState(false);
 		}
 
 		if( blueBall.getBounds().overlaps(gun.getBounds()) && gun.changeScore()){
@@ -422,6 +425,12 @@ public class GameStage extends Stage {
 		flame = new Weapon(world,camera, Weapon.WeaponType.FLAME,new Vector2(0,0),wepDims);
 		spike = new Weapon(world,camera, Weapon.WeaponType.SPIKE,new Vector2(screenDims.x - wepDims.x, 0),wepDims);
 		electric = new Weapon(world,camera, Weapon.WeaponType.ELECTRIC,new Vector2(0, screenDims.y-wepDims.y),wepDims);
+
+
+		gunSound = Gdx.audio.newSound(Gdx.files.internal("audio/gun.mp3"));
+		spikeSound = Gdx.audio.newSound(Gdx.files.internal("audio/spike.mp3"));
+		flameSound = Gdx.audio.newSound(Gdx.files.internal("audio/flame.mp3"));
+		electricSound = Gdx.audio.newSound(Gdx.files.internal("audio/electric.mp3"));
 
 		addActor(gun);
 		addActor(flame);
