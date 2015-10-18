@@ -22,6 +22,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.myappstack.gball.actors.BallT.State;
 import com.myappstack.gball.utils.Constants;
 import com.myappstack.gball.utils.WorldUtils;
@@ -50,10 +51,11 @@ public class Ball extends Image{
 	Rectangle bounds;
 	Circle bound;
 	
-	private Texture seq1, seq2, seq3;
+	private Texture seq1, imgGun, imgFlame, imgSpike, imgElec;
 	
 	private boolean inAnim;
 	private long animStartTime;
+	private long imgChange;
 	
 	//private ParticleEffect tail;
 
@@ -70,8 +72,11 @@ public class Ball extends Image{
 		this.speed = Constants.BALL_SPEED;
 		
 		this.seq1 = img;
-		this.seq2 = new Texture(Gdx.files.internal("blue_2.png"));
-		this.seq3 = new Texture(Gdx.files.internal("blue_3.png"));
+		this.imgElec = new Texture(Gdx.files.internal("ball_on_shock.png"));
+		this.imgGun = new Texture(Gdx.files.internal("ballongun.png"));
+		this.imgSpike = new Texture(Gdx.files.internal("ballonspike.png"));
+		this.imgFlame = new Texture(Gdx.files.internal("ball-on-fire.png"));
+		this.imgChange = System.currentTimeMillis();
 		this.inAnim = false;
 		
 		dims = WorldUtils.viewportToScreen(new Vector2(2*Constants.BALL_RADIUS,2*Constants.BALL_RADIUS),camera);
@@ -94,6 +99,27 @@ public class Ball extends Image{
         //tail.start();
         //tail.allowCompletion();
 	
+	}
+
+	public void nearWep(Weapon.WeaponType type){
+		if(type == Weapon.WeaponType.GUN){
+			this.setDrawable(new TextureRegionDrawable(new Sprite(this.imgGun)));
+			this.imgChange = System.currentTimeMillis();
+		}
+		else if(type == Weapon.WeaponType.FLAME){
+			this.setDrawable(new TextureRegionDrawable(new Sprite(this.imgFlame)));
+			this.imgChange = System.currentTimeMillis();
+		}
+		else if(type == Weapon.WeaponType.SPIKE){
+			this.setDrawable(new TextureRegionDrawable(new Sprite(this.imgSpike)));
+			this.imgChange = System.currentTimeMillis();
+		}
+		else {
+			this.setDrawable(new TextureRegionDrawable(new Sprite(this.imgElec)));
+			this.imgChange = System.currentTimeMillis();
+		}
+		setPosition(posScreen.x, posScreen.y);
+		setSize(dims.x, dims.y);
 	}
 	
 	
@@ -124,6 +150,12 @@ public class Ball extends Image{
 		super.act(delta);
 		// pos.add(direction.scl(2));
 		//System.out.println(pos.toString());
+
+		if(TimeUtils.timeSinceMillis(imgChange) > 1000){
+			this.setDrawable(new TextureRegionDrawable(new Sprite(this.seq1)));
+			setPosition(posScreen.x, posScreen.y);
+			setSize(dims.x, dims.y);
+		}
 		
 		if(this.state != State.NORMAL && (System.currentTimeMillis() - stateStartTime) > 3000){
 			setStateProperties(State.NORMAL);
@@ -181,7 +213,7 @@ public class Ball extends Image{
 		setOrigin(getWidth()/2, getHeight()/2);
 		
 		if(this.inAnim){
-			drawFrame();
+			//drawFrame();
 		}
 		
 		//tail.setPosition(posScreen.x, posScreen.y);
@@ -191,22 +223,7 @@ public class Ball extends Image{
 		//}
 	}
 	
-	
-	public void drawFrame(){
-		int atime =(int)( System.currentTimeMillis() - this.animStartTime);
-		if(atime < 200)
-			this.setDrawable(new TextureRegionDrawable(new Sprite(this.seq2)));
-		else if(atime < 400){
-			this.setDrawable(new TextureRegionDrawable(new Sprite(this.seq3)));
-		}
-		else if (atime < 600){
-			this.setDrawable(new TextureRegionDrawable(new Sprite(this.seq2)));
-		}
-		else{
-			this.setDrawable(new TextureRegionDrawable(new Sprite(this.seq1)));
-			this.inAnim = false;
-		}
-	}
+
 	
 	@Override
 	public void draw(Batch batch, float parentAlpha) {

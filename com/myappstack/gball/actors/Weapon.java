@@ -57,8 +57,8 @@ public class Weapon extends Actor
         Texture t = null;
         if(this.type == WeaponType.FLAME)
         {
-            actveT = new Texture(Gdx.files.internal("flamethrower1.png"));
-            normalT = new Texture(Gdx.files.internal("flamethrowe2.png"));
+            actveT = new Texture(Gdx.files.internal("flamethrowe2.png"));
+            normalT = new Texture(Gdx.files.internal("flamethrower1.png"));
             effectT = new Texture(Gdx.files.internal("fire_eff.png"));
             this.hasEffect = true;
 
@@ -68,24 +68,24 @@ public class Weapon extends Actor
         }
         else if(this.type == WeaponType.ELECTRIC)
         {
-            actveT = new Texture(Gdx.files.internal("electric1.png"));
-            normalT = new Texture(Gdx.files.internal("electric2.png"));
+            actveT = new Texture(Gdx.files.internal("electric2.png"));
+            normalT = new Texture(Gdx.files.internal("electric1.png"));
             effectT = new Texture(Gdx.files.internal("shock.png"));
             this.hasEffect = true;
 
             effect = new Sprite(effectT);
-            effect.setPosition(dims.x/2,pos.y-dims.y/2);
-            effect.setSize(dims.x,dims.y);
+            effect.setPosition(dims.x / 2, pos.y - dims.y / 2);
+            effect.setSize(dims.x, dims.y);
         }
         else if(this.type == WeaponType.SPIKE)
         {
-            actveT = new Texture(Gdx.files.internal("spike1.png"));
-            normalT = new Texture(Gdx.files.internal("spike2.png"));
+            actveT = new Texture(Gdx.files.internal("spike2.png"));
+            normalT = new Texture(Gdx.files.internal("spike1.png"));
         }
         else
         {
-            actveT = new Texture(Gdx.files.internal("gun1.png"));
-            normalT = new Texture(Gdx.files.internal("gun2.png"));
+            actveT = new Texture(Gdx.files.internal("gun2.png"));
+            normalT = new Texture(Gdx.files.internal("gun1.png"));
         }
 
         active = new Sprite(actveT);

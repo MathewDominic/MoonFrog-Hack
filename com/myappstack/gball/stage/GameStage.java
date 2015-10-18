@@ -211,15 +211,19 @@ public class GameStage extends Stage {
 
 		if( blueBall.getBounds().overlaps(gun.getBounds()) && gun.changeScore()){
 			score = score + 3;
+			blueBall.nearWep(Weapon.WeaponType.GUN);
 		}
 		if( blueBall.getBounds().overlaps(flame.getBounds()) && flame.changeScore()  ){
 			score = score + 3;
+			blueBall.nearWep(Weapon.WeaponType.FLAME);
 		}
 		if( blueBall.getBounds().overlaps(spike.getBounds()) && spike.changeScore() ){
 			score = score + 3;
+			blueBall.nearWep(Weapon.WeaponType.SPIKE);
 		}
 		if( blueBall.getBounds().overlaps(electric.getBounds()) && electric.changeScore()){
 			score = score + 3;
+			blueBall.nearWep(Weapon.WeaponType.ELECTRIC);
 		}
 
 		scoreLabel.setText(score.toString());
@@ -347,6 +351,11 @@ public class GameStage extends Stage {
 		timeLabel.remove();
 		table.remove();
 
+		gun.remove();
+		spike.remove();
+		flame.remove();
+		electric.remove();
+
 		addActor(leftScore);
 		addActor(rightScore);
 
@@ -362,6 +371,14 @@ public class GameStage extends Stage {
 			float fontScale = (dims.y-10)/64;
 			scoreLabel.setFontScale(fontScale);
 			scoreLabel.setPosition(screenDims.x/2- 10, screenDims.y/2 - 10);
+
+			scoreLabel.addListener(new InputListener() {
+				public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+					replay();
+					return true;
+				}
+			});
+
 			return false;
 		}
 	};
@@ -385,12 +402,8 @@ public class GameStage extends Stage {
 	}*/
 
 	private void setupBall() {
-		Texture tBlue = new Texture(Gdx.files.internal("b2.png"));
-		Texture tRed = new Texture(Gdx.files.internal("b1.png"));
+		Texture tBlue = new Texture(Gdx.files.internal("ball_1.png"));
 		blueBall = new Ball(tBlue,camera,margins, new Vector2(1,1), Constants.FOOD_WIDTH+1, Constants.FOOD_HEIGHT+Constants.MARGIN);
-		//redBall = new Ball(tRed,camera,margins, new Vector2(1,-1), Constants.FOOD_WIDTH+1, Constants.VIEWPORT_HEIGHT-Constants.FOOD_HEIGHT-Constants.MARGIN);
-		
-		//addActor(redBall);
 		addActor(blueBall);
 	}
 
