@@ -23,10 +23,9 @@ public class Weapon extends Actor
     private Sprite sprite;
     private Sprite active;
     private Sprite normal;
-    private boolean isPicked;
+    private boolean isPicked, canChangeScore1;
 
-    Rectangle bounds;
-    Circle bound;
+    Circle bounds;
     public static enum WeaponType {
         FLAME,
         GUN,
@@ -46,8 +45,8 @@ public class Weapon extends Actor
         this.pos = pos;
         this.dims = dims;
         this.isPicked = false;
-        this.bounds = new Rectangle();
-        this.bound = new Circle();
+        this.canChangeScore1 = false;
+        this.bounds = new Circle();
 
         //dims = WorldUtils.viewportToScreen(new Vector2(Constants.FOOD_WIDTH, Constants.FOOD_HEIGHT), camera);
         //pos = WorldUtils.viewportToScreen(new Vector2(x,y), camera);
@@ -86,10 +85,21 @@ public class Weapon extends Actor
         this.xVal = (int) xyval.x;
         this.yVal = (int) xyval.y;
 
-        bounds.set(this.xVal,this.yVal,Constants.WEP_SIZE,Constants.WEP_SIZE);
-        bound.set(this.xVal+Constants.WEP_SIZE/2, this.yVal+Constants.WEP_SIZE/2, Constants.WEP_SIZE);
+        bounds.set(this.xVal,this.yVal,Constants.WEP_SIZE);
     }
 
+    public Circle getBounds(){
+        return bounds;
+    }
+
+    public boolean changeScore(){
+        boolean ret = false;
+        if(this.isPicked){
+            ret = true;
+            this.isPicked = false;
+        }
+        return ret;
+    }
 
     public void changeState(boolean isPicked)
     {

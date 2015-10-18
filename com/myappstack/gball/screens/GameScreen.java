@@ -25,7 +25,7 @@ public class GameScreen implements Screen {
 	@Override
 	public void render(float delta) {
 		// TODO Auto-generated method stub
-		Gdx.gl.glClearColor(0.502f, 0.502f, 0.502f, 0f);
+		Gdx.gl.glClearColor(0.95f, 0.757f, 0.453f, 0f);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         //Update the stage

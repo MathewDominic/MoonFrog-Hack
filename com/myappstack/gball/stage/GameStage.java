@@ -83,7 +83,7 @@ public class GameStage extends Stage {
 
 	private final float TIME_STEP = 1 / 300f;
 	private float accumulator = 0f;
-
+	private int timeActive = 5000;
 	private OrthographicCamera camera;
 	private Box2DDebugRenderer renderer;
 	
@@ -106,11 +106,6 @@ public class GameStage extends Stage {
         
         touchStart = touchEnd = null;
 		startTime= TimeUtils.millis();
-		gun_active_time=2500;
-		fire_active_time=2500;
-		electric_active_time=2500;
-		spike_active_time=2500;
-
 
 	}
 
@@ -126,33 +121,33 @@ public class GameStage extends Stage {
 			accumulator -= TIME_STEP;
 		}
 		currentTime = (TimeUtils.millis() - startTime)/1000;
-		if(currentTime == 10)
+		if(currentTime == 60)
 			gameOver();
 
 		if(this.gOver){
 			return;
 		}
-		if(TimeUtils.timeSinceMillis(gun_active_time) < 2000) {
+		if(TimeUtils.timeSinceMillis(gun_active_time) < timeActive) {
 			gun.changeState(true);
 		}
 		else if(gun.isActive()) {
 			gun.changeState(false);
 
 		}
-		if(TimeUtils.timeSinceMillis(spike_active_time) < 2000) {
+		if(TimeUtils.timeSinceMillis(spike_active_time) < timeActive) {
 			spike.changeState(true);
 		}
 		else if(spike.isActive()) {
 				spike.changeState(false);
 
 		}
-		if(TimeUtils.timeSinceMillis(electric_active_time) < 2000) {
+		if(TimeUtils.timeSinceMillis(electric_active_time) < timeActive) {
 			electric.changeState(true);
 		}
 		else if( electric.isActive()) {
 				electric.changeState(false);
 		}
-		if(TimeUtils.timeSinceMillis(fire_active_time) < 2000) {
+		if(TimeUtils.timeSinceMillis(fire_active_time) < timeActive) {
 			flame.changeState(true);
 		}
 		else if(flame.isActive()) {
@@ -213,6 +208,22 @@ public class GameStage extends Stage {
 
 
 		}
+
+		if( blueBall.getBounds().overlaps(gun.getBounds()) && gun.changeScore()){
+			score = score + 3;
+		}
+		if( blueBall.getBounds().overlaps(flame.getBounds()) && flame.changeScore()  ){
+			score = score + 3;
+		}
+		if( blueBall.getBounds().overlaps(spike.getBounds()) && spike.changeScore() ){
+			score = score + 3;
+		}
+		if( blueBall.getBounds().overlaps(electric.getBounds()) && electric.changeScore()){
+			score = score + 3;
+		}
+
+		scoreLabel.setText(score.toString());
+
 
 		timeLabel.setText(String.valueOf(60-currentTime));
 
@@ -410,8 +421,12 @@ public class GameStage extends Stage {
 				camera.viewportHeight / 2, 0f);
 		camera.update();
 	}
-	
 
+	@Override
+	public void draw() {
+		super.draw();
+		renderer.render(world, camera.combined);
+	}
 
 	public Vector2 screenToViewport(Vector2 v) {
 		Vector3 vtemp = camera.unproject(new Vector3(v.x, v.y, 0));

@@ -14,8 +14,8 @@ public class Constants {
     
     public static final int scw = 8, sch = 8;
     
-    public static final int TOP_MARGIN = 2;
-    public static final int MARGIN=2;
+    public static final int TOP_MARGIN = 1;
+    public static final int MARGIN=1;
     
     public static final int BALL_RADIUS = 5;
     public static final float BALL_SPEED = 1.4f;
