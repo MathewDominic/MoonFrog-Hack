@@ -1,6 +1,7 @@
 package com.myappstack.gball.actors;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -27,6 +28,7 @@ public class Weapon extends Actor
     private boolean isPicked, canChangeScore1, hasEffect;
 
     private Sprite effect;
+    private Sound sound;
 
     Circle bounds;
     public static enum WeaponType {
@@ -60,6 +62,7 @@ public class Weapon extends Actor
             actveT = new Texture(Gdx.files.internal("flamethrowe2.png"));
             normalT = new Texture(Gdx.files.internal("flamethrower1.png"));
             effectT = new Texture(Gdx.files.internal("fire_eff.png"));
+            sound = Gdx.audio.newSound(Gdx.files.internal("audio/flame.mp3"));
             this.hasEffect = true;
 
             effect = new Sprite(effectT);
@@ -71,6 +74,7 @@ public class Weapon extends Actor
             actveT = new Texture(Gdx.files.internal("electric2.png"));
             normalT = new Texture(Gdx.files.internal("electric1.png"));
             effectT = new Texture(Gdx.files.internal("shock.png"));
+            sound = Gdx.audio.newSound(Gdx.files.internal("audio/electric.mp3"));
             this.hasEffect = true;
 
             effect = new Sprite(effectT);
@@ -81,11 +85,13 @@ public class Weapon extends Actor
         {
             actveT = new Texture(Gdx.files.internal("spike2.png"));
             normalT = new Texture(Gdx.files.internal("spike1.png"));
+            sound = Gdx.audio.newSound(Gdx.files.internal("audio/spike.mp3"));
         }
         else
         {
             actveT = new Texture(Gdx.files.internal("gun2.png"));
             normalT = new Texture(Gdx.files.internal("gun1.png"));
+            sound = Gdx.audio.newSound(Gdx.files.internal("audio/gun.mp3"));
         }
 
         active = new Sprite(actveT);
@@ -120,6 +126,9 @@ public class Weapon extends Actor
     public void changeState(boolean isPicked)
     {
         this.isPicked = isPicked;
+        if(isPicked == true){
+            sound.play(1.0f);
+        }
     }
 
     public boolean isActive(){

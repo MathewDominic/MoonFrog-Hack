@@ -1,6 +1,7 @@
 package com.myappstack.gball.stage;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -77,7 +78,6 @@ public class GameStage extends Stage {
 	private Image leftScore, rightScore;
 
 	//private ParticleEffect redExpo, blueExpo;
-	private Sound gunSound,flameSound,electricSound,spikeSound;
 	//private boolean drawDestroyPeffect, activeGun, activeSpike, activeElectric, activeFire;
 
 	private final float TIME_STEP = 1 / 300f;
@@ -101,7 +101,9 @@ public class GameStage extends Stage {
     	setupScore();
 		setUpWep();
     	Gdx.input.setInputProcessor(this);
-        renderer = new Box2DDebugRenderer();
+		Gdx.input.setCatchBackKey(true);
+
+		renderer = new Box2DDebugRenderer();
         
         touchStart = touchEnd = null;
 		startTime= TimeUtils.millis();
@@ -183,7 +185,6 @@ public class GameStage extends Stage {
 
 		if(TimeUtils.timeSinceMillis(gun_active_time) < timeActive) {
 			gun.changeState(true);
-			gunSound.play(1.0f);
 		}
 		else if(gun.isActive()) {
 			gun.changeState(false);
@@ -191,7 +192,6 @@ public class GameStage extends Stage {
 		}
 		if(TimeUtils.timeSinceMillis(spike_active_time) < timeActive) {
 			spike.changeState(true);
-			spikeSound.play(1.0f);
 		}
 		else if(spike.isActive()) {
 			spike.changeState(false);
@@ -199,14 +199,12 @@ public class GameStage extends Stage {
 		}
 		if(TimeUtils.timeSinceMillis(electric_active_time) < timeActive) {
 			electric.changeState(true);
-			electricSound.play(1.0f);
 		}
 		else if( electric.isActive()) {
 			electric.changeState(false);
 		}
 		if(TimeUtils.timeSinceMillis(fire_active_time) < timeActive) {
 			flame.changeState(true);
-			flameSound.play(1.0f);
 		}
 		else if(flame.isActive()) {
 			flame.changeState(false);
@@ -362,8 +360,15 @@ public class GameStage extends Stage {
 		addActor(leftScore);
 		addActor(rightScore);
 
-		leftScore.addAction(Actions.sequence(Actions.moveTo(0, 0, 1.0f),dispScore));
+		leftScore.addAction(Actions.sequence(Actions.moveTo(0, 0, 1.0f), dispScore));
 		rightScore.addAction(Actions.sequence(Actions.moveTo(screenDims.x/2,0,1.0f)));
+
+		leftScore.addListener(new InputListener() {
+			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+				replay();
+				return false;
+			}
+		});
 	}
 
 	Action dispScore = new Action() {
@@ -373,14 +378,7 @@ public class GameStage extends Stage {
 			addActor(scoreLabel);
 			float fontScale = (dims.y-10)/64;
 			scoreLabel.setFontScale(fontScale);
-			scoreLabel.setPosition(screenDims.x/2- 10, screenDims.y/2 - 10);
-
-			scoreLabel.addListener(new InputListener() {
-				public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-					replay();
-					return true;
-				}
-			});
+			scoreLabel.setPosition(screenDims.x / 4, screenDims.y / 2 - 10);
 
 			return false;
 		}
@@ -427,10 +425,6 @@ public class GameStage extends Stage {
 		electric = new Weapon(world,camera, Weapon.WeaponType.ELECTRIC,new Vector2(0, screenDims.y-wepDims.y),wepDims);
 
 
-		gunSound = Gdx.audio.newSound(Gdx.files.internal("audio/gun.mp3"));
-		spikeSound = Gdx.audio.newSound(Gdx.files.internal("audio/spike.mp3"));
-		flameSound = Gdx.audio.newSound(Gdx.files.internal("audio/flame.mp3"));
-		electricSound = Gdx.audio.newSound(Gdx.files.internal("audio/electric.mp3"));
 
 		addActor(gun);
 		addActor(flame);
@@ -446,9 +440,17 @@ public class GameStage extends Stage {
 	}
 
 	@Override
+	public boolean keyDown(int keyCode) {
+		if(keyCode == Input.Keys.BACK){
+			this.gballGame.setScreen(new StartScreen(this.gballGame));
+		}
+		return false;
+	}
+
+	@Override
 	public void draw() {
 		super.draw();
-		renderer.render(world, camera.combined);
+		//renderer.render(world, camera.combined);
 	}
 
 	public Vector2 screenToViewport(Vector2 v) {
