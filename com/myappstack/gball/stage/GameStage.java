@@ -147,19 +147,23 @@ public class GameStage extends Stage {
 			if(food.getType() == FoodType.GUN)
 			{
 				gun_active_time=TimeUtils.millis();
+				gun.changeState(true);
 			}
 			else if(food.getType() == FoodType.FLAME)
 			{
 				fire_active_time=TimeUtils.millis();
+				flame.changeState(true);
 			}
 			else if(food.getType() == FoodType.SPIKE)
 			{
 
 				spike_active_time=TimeUtils.millis();
+				spike.changeState(true);
 			}
 			else if(food.getType() == FoodType.ELECTRIC)
 			{
 				electric_active_time=TimeUtils.millis();
+				electric.changeState(true);
 			}
 
 			int newXpos = MathUtils.random(Constants.MARGIN+1, Constants.VIEWPORT_WIDTH
@@ -183,32 +187,22 @@ public class GameStage extends Stage {
 
 		}
 
-		if(TimeUtils.timeSinceMillis(gun_active_time) < timeActive) {
-			gun.changeState(true);
-		}
-		else if(gun.isActive()) {
+		if(TimeUtils.timeSinceMillis(gun_active_time) > timeActive) {
 			gun.changeState(false);
+		}
 
-		}
-		if(TimeUtils.timeSinceMillis(spike_active_time) < timeActive) {
-			spike.changeState(true);
-		}
-		else if(spike.isActive()) {
+		if(TimeUtils.timeSinceMillis(spike_active_time) > timeActive) {
 			spike.changeState(false);
+		}
 
-		}
-		if(TimeUtils.timeSinceMillis(electric_active_time) < timeActive) {
-			electric.changeState(true);
-		}
-		else if( electric.isActive()) {
+		if(TimeUtils.timeSinceMillis(electric_active_time) > timeActive) {
 			electric.changeState(false);
 		}
-		if(TimeUtils.timeSinceMillis(fire_active_time) < timeActive) {
-			flame.changeState(true);
-		}
-		else if(flame.isActive()) {
+
+		if(TimeUtils.timeSinceMillis(fire_active_time) > timeActive) {
 			flame.changeState(false);
 		}
+
 
 		if( blueBall.getBounds().overlaps(gun.getBounds()) && gun.changeScore()){
 			score = score + 3;
